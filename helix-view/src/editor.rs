@@ -733,6 +733,8 @@ impl Default for ModeConfig {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum StatusLineElement {
+    WordCount,
+
     /// The editor mode (Normal, Insert, Visual/Selection)
     Mode,
 

@@ -152,6 +152,7 @@ where
         helix_view::editor::StatusLineElement::Position => render_position,
         helix_view::editor::StatusLineElement::PositionPercentage => render_position_percentage,
         helix_view::editor::StatusLineElement::TotalLineNumbers => render_total_line_numbers,
+        helix_view::editor::StatusLineElement::WordCount => render_word_count,
         helix_view::editor::StatusLineElement::Separator => render_separator,
         helix_view::editor::StatusLineElement::Spacer => render_spacer,
         helix_view::editor::StatusLineElement::VersionControl => render_version_control,
@@ -159,6 +160,25 @@ where
         helix_view::editor::StatusLineElement::CurrentWorkingDirectory => render_cwd,
         helix_view::editor::StatusLineElement::CodeActionHint => render_code_action_hint,
     }
+}
+fn render_word_count<'a, F>(context: &mut RenderContext<'a>, write: F)
+where
+    F: Fn(&mut RenderContext<'a>, Span<'a>) + Copy,
+{
+    let text = context.doc.text().slice(..);
+    let mut word_count = 0usize;
+    let mut in_word = false;
+
+    for ch in text.chars() {
+        if ch.is_whitespace() {
+            in_word = false;
+        } else if !in_word {
+            in_word = true;
+            word_count += 1;
+        }
+    }
+
+    write(context, format!(" {} words ", word_count).into());
 }
 
 fn render_mode<'a, F>(context: &mut RenderContext<'a>, write: F)
